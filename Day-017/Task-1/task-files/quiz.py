@@ -3,22 +3,39 @@
 # Create the QuizMaster class.
 class QuizMaster:
 
-    def __init__(self, question_list ):
+    def __init__(self, question_data ):
 
         # Define and initialize question number to 0.
         self.question_number = 0
-
-        # Define and initialize the question list.
-        self.question_list = question_list
-
-        # Define and initialize the next question to be asked.
-        self.next_question = self.question_list[self.question_number]
 
         # Define and initialise indication if there are questions left.
         self.questions_left = True
 
         # Define and initialize the current score.
         self.current_score = 0
+
+        # Define and initialize the question list.
+        self.question_list = []
+
+        # Loop through the question_data, create new Question object each time and
+        # append it to question_list:
+        for item in question_data:
+
+            # Create new question object.
+            question = self.Question(text=item["text"], answer=item["answer"])
+
+            # Append the next question object to question_list.
+            self.question_list.append(question)
+
+    # Create the Question inner class.
+    class Question:
+
+        def __init__(self, text, answer):
+            # Define and initialize an attribute to hold the question text of the question.
+            self.text = text
+
+            # Define and initialize an attribute to hold the answer text of the question.
+            self.answer = answer
 
     # Define the class method to ask the next question from the list
     # and ask the user for their answer.
@@ -33,19 +50,19 @@ class QuizMaster:
         """
 
         # Get the next question form the question list.
-        self.next_question = self.question_list[self.question_number]
+        next_question = self.question_list[self.question_number]
 
         # Define and initialise the question answer to an empty string.
         question_answer = ""
 
-        # Define and initialize indicaton that the user answer is invalid.
+        # Define and initialize indication that the user answer is invalid.
         user_answer_is_invalid = True
 
         # Loop while the user answer in not "true" or "False".
         while user_answer_is_invalid:
 
             # Ask the user the next question and get their answer.
-            question_answer = input(f"Q.{self.question_number + 1} : {self.next_question.text} Answer True or False: ").lower()
+            question_answer = input(f"Q.{self.question_number + 1} : {next_question.text} Answer True or False: ").lower()
 
             # Has the user entered "True" or "False"?
             if not ( question_answer == "true" or question_answer == "false" ):
@@ -79,8 +96,11 @@ class QuizMaster:
         :return:
         """
 
+        # Fetch the current question being asked.
+        question = self.question_list[self.question_number]
+
         # Is the user answer correct?
-        if question_answer == self.next_question.answer.lower():
+        if question_answer == question.answer.lower():
 
             # Yes, so increment the user score.
             self.current_score += 1
@@ -89,7 +109,7 @@ class QuizMaster:
             print("Well done! You got it right!")
 
             # Print the correct answer to the console.
-            print(f"The answer was {self.next_question.answer}.")
+            print(f"The answer was {question.answer}.")
 
         # No.
         else:
@@ -98,13 +118,13 @@ class QuizMaster:
             print(f"Sorry. You got it wrong.")
 
             # Print the correct answer to the console.
-            print(f"The correct answer is: {self.next_question.answer}.")
-
-        # Print the user's current score to the console.
-        print(f"Your current score is: {self.current_score}/{self.question_number}.\n")
+            print(f"The correct answer is: {question.answer}.")
 
         # Increment the question number.
         self.question_number += 1
+
+        # Print the user's current score to the console.
+        print(f"Your current score is: {self.current_score}/{self.question_number}.\n")
 
         # Update is there are still questions left.
         self.questions_left = self.question_number < len(self.question_list)
